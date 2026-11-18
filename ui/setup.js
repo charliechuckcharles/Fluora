@@ -453,9 +453,11 @@ function footer() {
     const p = SU.plan, vp = viewProblems();
     const renames = p?.renames?.length || 0, blocking = p ? p.problems.filter(x => x.kind !== 'note').length : 0;
     const renaming = running && ['rename', 'undo'].includes(SU.job.kind);
+    // images whose blanks stop them being renamed (they aren't counted in renames)
+    const needLabels = p ? new Set(p.problems.filter(x => x.kind !== 'note' && x.entry != null).map(x => `${x.group}:${x.entry}`)).size : 0;
     const left = renaming ? `<span class="su-status">${esc(SU.job.message || 'Renaming…')} ${SU.job.total ? `${fmt(SU.job.done)} of ${fmt(SU.job.total)}` : ''}</span>`
       : SU.stamp ? `<span class="su-status good">${ICON.check}Renamed ${plural(SU.renamed, 'file')}. <button class="ghost" data-act="su-undo">${ICON.undo}Undo rename</button></span>`
-      : `<span class="su-status">${vp.size ? `<b class="bad">${plural(vp.size, 'image')} need${vp.size === 1 ? 's' : ''} an image number</b>` : p ? (renames ? `${plural(renames, 'file')} would get a new name` : 'All names already follow the lab’s format') : 'Checking names…'}${blocking && renames ? ` · ${fmt(blocking)} to fill in before renaming` : ''}</span>`;
+      : `<span class="su-status">${vp.size ? `<b class="bad">${plural(vp.size, 'image')} need${vp.size === 1 ? 's' : ''} an image number</b>` : p ? (renames ? `${plural(renames, 'file')} would get a new name` : needLabels ? `${plural(needLabels, 'image')} need${needLabels === 1 ? 's' : ''} labels before renaming` : 'All names already follow the lab’s format') : 'Checking names…'}${blocking && renames ? ` · ${fmt(blocking)} to fill in before renaming` : ''}</span>`;
     const renameBtn = (cls) => `<button class="${cls}" data-act="su-rename" ${renames && !blocking && !running ? '' : 'disabled'} title="${blocking ? 'Fill in the missing values first' : renames ? 'Give the files on the drive the lab’s names' : 'Nothing to rename'}">Rename files${SU.mode === 'renamer' ? (renames ? ` (${fmt(renames)})` : '') : ' on the drive…'}</button>`;
     if (SU.mode === 'renamer') {
       return `${left}<button class="ghost" data-act="su-step" data-s="folder">Back</button>
