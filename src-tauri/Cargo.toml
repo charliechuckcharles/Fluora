@@ -1,0 +1,30 @@
+[package]
+name = "fluora"
+version = "0.1.0"
+description = "Fluora: browse, mark and snap slide-scanner images"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+glob = "0.3.4"
+http = "1"
+image = { version = "0.25.10", default-features = false, features = ["jpeg", "png"] }
+percent-encoding = "2.3.2"
+rayon = "1.12.0"
+regex = "1.13.1"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tiff = "0.11.3"
+fluora-naming = { path = "../crates/naming" }
+weezl = "0.1.12"
+tiny_http = { version = "0.12.0", optional = true }
+base64 = "0.22"
+
+
+[features]
+# For testing only: also serve the app at http://127.0.0.1:<SB_DEV_PORT> so it can be checked in a browser
+devserver = ["dep:tiny_http"]

@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "app-pages",
+  "description": "The same, for the pages the app serves on its own sb:// address",
+  "windows": ["main"],
+  "remote": { "urls": ["sb://localhost/*", "http://sb.localhost/*"] },
+  "permissions": ["core:default", "dialog:default"]
+}

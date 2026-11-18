@@ -1,0 +1,7 @@
+/src-tauri/target/
+/renamer/target/
+/crates/naming/target/
+.DS_Store
+._*
+/Fluora.app/
+/Fluora Renamer.app/

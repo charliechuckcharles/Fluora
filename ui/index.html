@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fluora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap">
+<link rel="icon" href="icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <div class="brand">
+    <div class="logo-fl"></div>
+    <div class="brand-text"><b>Fluora</b>
+      <button class="project-btn" id="project-btn" data-act="project-menu" title="Switch project, or make a new one"></button>
+      <div class="project-menu" id="project-menu" hidden></div></div>
+  </div>
+  <nav class="tabs"><button class="on" data-act="tab" data-t="slides">Slides</button><button data-act="tab" data-t="gallery">Gallery</button><button data-act="tab" data-t="board">Board</button><button data-act="tab" data-t="snaps">Snaps</button><button data-act="tab" data-t="bouquet" class="bq-tab">Bouquet</button></nav>
+  <div class="stats" id="stats"></div>
+  <div id="build"></div>
+  <div class="actions">
+    <button class="ghost" data-act="good-list">Good snap list</button>
+    <button class="ghost" data-act="contrast">Brightness &amp; contrast</button>
+    <button class="ghost" data-act="rebuild" title="Look for new slides in your image folder">Refresh</button>
+    <button class="ghost" data-act="settings" title="Image folder, condition names and more">Settings</button>
+    <button class="ghost help-btn" id="help-btn" data-act="help" title="How to use Fluora, shortcuts and the tour" aria-label="Help"><svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.4"/><path d="M6.2 6.3a1.9 1.9 0 0 1 3.7.5c0 1.3-1.9 1.6-1.9 2.8"/><circle cx="8" cy="11.6" r=".6" class="fill"/></svg></button>
+    <button class="me" id="me" data-act="me" title="Your name, used to label your marks, notes and snaps"></button>
+  </div>
+</header>
+<div class="layout" id="slides-view">
+  <aside id="filters"></aside>
+  <main id="grid"></main>
+</div>
+<div id="gallery" hidden></div>
+<div id="board" hidden></div>
+<div id="snaps" hidden></div>
+<div id="snapview" hidden></div>
+<div id="bouquet" hidden></div>
+<div id="bqview" hidden></div>
+<div id="toast" hidden></div>
+<div id="viewer" hidden></div>
+<div id="setup" hidden></div>
+<div id="su-tip" role="tooltip" hidden></div>
+<div id="modal" hidden></div>
+<div id="tour" hidden></div>
+<script src="fluora.js"></script>
+<script src="app.js"></script>
+<script src="board.js"></script>
+<script src="gallery.js"></script>
+<script src="projects.js"></script>
+<script src="snaps.js"></script>
+<script src="setup.js"></script>
+<script src="bouquet.js"></script>
+<script src="tour.js"></script>
+</body>
+</html>

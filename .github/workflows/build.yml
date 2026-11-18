@@ -1,0 +1,81 @@
+# Builds the Mac and Windows installers of Fluora and Fluora Renamer, and puts them in a draft
+# release. Start it from the Actions tab (Run workflow, with a version like 0.2.0), or by pushing
+# a tag like v0.2.0.
+name: Build installers
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version number, e.g. 0.2.0"
+        required: true
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-latest
+            args: --target universal-apple-darwin
+          - platform: windows-latest
+            args: ""
+    runs-on: ${{ matrix.platform }}
+    env:
+      VERSION: ${{ github.event.inputs.version || github.ref_name }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set the version
+        shell: bash
+        run: |
+          V="${VERSION#v}"
+          echo "V=$V" >> "$GITHUB_ENV"
+          for f in src-tauri/tauri.conf.json renamer/tauri.conf.json; do
+            python3 -c "import json,sys; p=sys.argv[1]; d=json.load(open(p)); d['version']=sys.argv[2]; json.dump(d,open(p,'w'),indent=2)" "$f" "$V" \
+              || python -c "import json,sys; p=sys.argv[1]; d=json.load(open(p)); d['version']=sys.argv[2]; json.dump(d,open(p,'w'),indent=2)" "$f" "$V"
+          done
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            src-tauri -> target
+            renamer -> target
+
+      - name: Install the Tauri CLI
+        run: cargo install tauri-cli --version "^2" --locked
+
+      - name: Build Fluora
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: src-tauri
+          tauriScript: cargo tauri
+          tagName: v${{ env.V }}
+          releaseName: Fluora v${{ env.V }}
+          releaseBody: |
+            **Fluora** and **Fluora Renamer** for Mac and Windows. See the README for how to install.
+          releaseDraft: true
+          args: ${{ matrix.args }}
+
+      - name: Build Fluora Renamer
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          projectPath: renamer
+          tauriScript: cargo tauri
+          tagName: v${{ env.V }}
+          releaseName: Fluora v${{ env.V }}
+          releaseDraft: true
+          args: ${{ matrix.args }}

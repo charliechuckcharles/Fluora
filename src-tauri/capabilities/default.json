@@ -1,0 +1,7 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Lets the app's own pages show alerts and questions (alert, confirm)",
+  "windows": ["main"],
+  "permissions": ["core:default", "dialog:default"]
+}
