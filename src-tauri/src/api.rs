@@ -189,6 +189,8 @@ fn projects_with_progress(st: &AppState) -> Value {
 fn post(app: &AppHandle, st: &AppState, path: &str, req: Value) -> Resp {
     let dir = st.store.current_dir();
     match path {
+        "/api/update/check" => ok(fluora_update::check(app)),
+        "/api/update/install" => err(500, &fluora_update::install(app)),
         "/api/marks" => {
             let Some(id) = req["id"].as_str() else { return err(400, "No image id") };
             let _g = st.store.lock();

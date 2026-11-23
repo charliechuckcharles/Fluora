@@ -31,6 +31,15 @@
     ],
     "macOS": {
       "signingIdentity": "-"
+    },
+    "createUpdaterArtifacts": true
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDE0NEVCNzBFNDA0RkU4OUQKUldTZDZFOUFEcmRPRkVIa3V1WmtDc0MzMG5LNWtuVjRxcURFNk1RalFydHpUZTdRZWpNc1BUcnQK",
+      "endpoints": [
+        "https://github.com/charliechuckcharles/Fluora/releases/latest/download/fluora-update.json"
+      ]
     }
   }
 }

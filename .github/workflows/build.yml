@@ -1,6 +1,6 @@
 # Builds the Mac and Windows installers of Fluora and Fluora Renamer, and puts them in a draft
-# release. Start it from the Actions tab (Run workflow, with a version like 0.2.0), or by pushing
-# a tag like v0.2.0.
+# release. Start it from the Actions tab (Run workflow, with a version like 0.2.0).
+# It also signs the builds and writes the files that let installed apps update themselves.
 name: Build installers
 
 on:
@@ -9,8 +9,6 @@ on:
       version:
         description: "Version number, e.g. 0.2.0"
         required: true
-  push:
-    tags: ["v*"]
 
 permissions:
   contents: write
@@ -27,9 +25,19 @@ jobs:
             args: ""
     runs-on: ${{ matrix.platform }}
     env:
-      VERSION: ${{ github.event.inputs.version || github.ref_name }}
+      VERSION: ${{ github.event.inputs.version }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Check the update-signing key is set
+        shell: bash
+        env:
+          KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::error::The secret TAURI_SIGNING_PRIVATE_KEY is missing. Add it under Settings > Secrets and variables > Actions (see the README, 'Making a new release')."
+            exit 1
+          fi
 
       - name: Set the version
         shell: bash
@@ -58,6 +66,8 @@ jobs:
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
         with:
           projectPath: src-tauri
           tauriScript: cargo tauri
@@ -66,16 +76,37 @@ jobs:
           releaseBody: |
             **Fluora** and **Fluora Renamer** for Mac and Windows. See the README for how to install.
           releaseDraft: true
+          includeUpdaterJson: false
           args: ${{ matrix.args }}
 
       - name: Build Fluora Renamer
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
         with:
           projectPath: renamer
           tauriScript: cargo tauri
           tagName: v${{ env.V }}
           releaseName: Fluora v${{ env.V }}
           releaseDraft: true
+          includeUpdaterJson: false
           args: ${{ matrix.args }}
+
+  # Adds the two small files the installed apps read to learn that a newer version is out
+  # (fluora-update.json, renamer-update.json). The apps only see them once the release is published.
+  updates:
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      VERSION: ${{ github.event.inputs.version }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Write and upload the update files
+        run: |
+          V="${VERSION#v}"
+          gh release download "v$V" --pattern "*.sig" --dir sigs
+          python3 scripts/update_manifest.py sigs "$V" out
+          gh release upload "v$V" out/fluora-update.json out/renamer-update.json --clobber

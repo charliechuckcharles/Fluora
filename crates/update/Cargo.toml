@@ -1,0 +1,10 @@
+[package]
+name = "fluora-update"
+version = "0.1.0"
+description = "Shared by Fluora and Fluora Renamer: check GitHub for a newer version and install it"
+edition = "2021"
+
+[dependencies]
+serde_json = "1"
+tauri = { version = "2", features = [] }
+tauri-plugin-updater = "2"

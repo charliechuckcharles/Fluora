@@ -17,6 +17,7 @@ use tauri::Manager;
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(fluora_update::plugin())
         .register_asynchronous_uri_scheme_protocol("sb", |ctx, request, responder| {
             let app = ctx.app_handle().clone();
             // Image work and folder dialogs can take a while, so each request gets its own thread

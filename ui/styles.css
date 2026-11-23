@@ -791,3 +791,11 @@ button.primary:disabled:hover { background: var(--accent); }
 .bqv-text p { flex-basis: 100%; margin: 4px 0 0; color: var(--text-2); font-size: 13px; max-width: 90ch; }
 .bqv-actions { margin-left: auto; display: flex; gap: 8px; flex: none; }
 @media (prefers-reduced-motion: reduce) { .bq-card, .bq-card img { transition: none; } }
+
+/* The "a new version is available" card, bottom right */
+#update-card { position: fixed; right: 18px; bottom: 18px; z-index: 60; width: min(380px, calc(100vw - 36px)); background: var(--panel); border: 1px solid var(--line-2); border-radius: 14px; padding: 16px 18px; box-shadow: var(--shadow); animation: fade .2s; }
+#update-card b { display: block; font-size: 14.5px; margin-bottom: 6px; }
+#update-card p { margin: 0 0 6px; font-size: 13px; line-height: 1.5; color: var(--text-2); }
+#update-card p.notes { white-space: pre-wrap; max-height: 120px; overflow: auto; color: var(--muted); }
+#update-card .link { font-family: var(--mono); font-size: 12px; color: var(--text); word-break: break-all; user-select: text; }
+#update-card .foot { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }

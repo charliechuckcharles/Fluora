@@ -110,6 +110,8 @@ fn post(app: &AppHandle, st: &State, path: &str, req: &Value) -> Resp {
             let dest = req["dest"].as_str().filter(|d| !d.trim().is_empty()).map(|d| (req["root"].as_str().unwrap_or("").to_string(), d.trim().to_string()));
             started(tasks::start_unpack(&st.jobs, st.root.clone(), fiji.unwrap_or_default(), czis, dest))
         }
+        "/api/update/check" => ok(fluora_update::check(app)),
+        "/api/update/install" => err(500, &fluora_update::install(app)),
         "/api/setup/cancel" => {
             st.jobs.cancel();
             ok(json!({"ok": true}))
@@ -121,6 +123,7 @@ fn post(app: &AppHandle, st: &State, path: &str, req: &Value) -> Resp {
 fn main() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
+        .plugin(fluora_update::plugin())
         .register_asynchronous_uri_scheme_protocol("sb", |ctx, request, responder| {
             let app = ctx.app_handle().clone();
             std::thread::spawn(move || responder.respond(handle(&app, request)));

@@ -87,6 +87,7 @@ Jupyter scripts are in [scripts/](scripts/).
 | `renamer/` | Fluora Renamer (Rust, Tauri 2) |
 | `ui/` | The screens of both apps (HTML, CSS, JavaScript) |
 | `crates/naming/` | Shared code: the naming convention, finding images in folders, renaming and undo, CZI unpacking |
+| `crates/update/` | Shared code: checking GitHub for a newer version and installing it |
 | `scripts/` | The lab's original Fiji macros and Jupyter notebooks |
 
 ### Building it yourself
@@ -101,5 +102,17 @@ cd renamer && cargo tauri build       # Fluora Renamer
 ### Making a new release
 
 On GitHub, open **Actions → Build installers → Run workflow**, type a version such as `0.2.0`, and
-click **Run workflow**. About 20 minutes later a draft release with the Mac and Windows installers
+click **Run workflow**. About 30 minutes later a draft release with the Mac and Windows installers
 of both apps appears under **Releases**; check it and click **Publish release**.
+
+Once it is published, everyone's installed Fluora and Fluora Renamer (version 0.2.0 or later)
+notice the next time they open: a card asks "Update now?", and on yes the app downloads the new
+version, swaps itself and restarts. Nobody has to download from GitHub again.
+
+**The update-signing key.** Each build is signed so the apps only accept updates that really came
+from this repository. The private key lives outside the repository, at
+`~/.tauri/fluora-updater.key` on the maintainer's Mac, and in the repository's GitHub secret
+`TAURI_SIGNING_PRIVATE_KEY` (Settings → Secrets and variables → Actions). Keep a backup of that
+file: without it, already-installed apps can't be updated automatically any more. To build on your
+own computer, point the build at the key:
+`TAURI_SIGNING_PRIVATE_KEY=~/.tauri/fluora-updater.key TAURI_SIGNING_PRIVATE_KEY_PASSWORD="" cargo tauri build`

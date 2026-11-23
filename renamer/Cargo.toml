@@ -9,6 +9,7 @@ tauri-build = { version = "2", features = [] }
 
 [dependencies]
 fluora-naming = { path = "../crates/naming" }
+fluora-update = { path = "../crates/update" }
 http = "1"
 percent-encoding = "2.3.2"
 serde_json = "1"
